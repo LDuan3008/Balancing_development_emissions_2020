@@ -45,8 +45,8 @@ def Fig_TimeSeries_Pieplots(interpolatedyearSSP, interpolatedpopSSPs, percapitag
     pie = [per_00, per_10, per_20, per_40, per_80, per_no]
     explode = (0, 0, 0, 0, 0, 0)
     plt.pie(pie, explode=explode, shadow=False, startangle=90, autopct='%1.3f%%', counterclock=False)
-    plt.show()
-    # plt.savefig('err_2_ssp_4_pie.ps')
+    # plt.show()
+    plt.savefig('err_2_ssp_4_pie.ps')
     plt.clf()
     
     
@@ -68,6 +68,6 @@ def Fig_TimeSeries_Pieplots(interpolatedyearSSP, interpolatedpopSSPs, percapitag
     percentage = category / np.sum(pop_ssp5_2020) * 100
     explode = (0, 0, 0, 0, 0)
     plt.pie(percentage, explode=explode, shadow=False, startangle=90, autopct='%1.4f%%', counterclock=False)
-    plt.show()
-    # plt.savefig('pie_pop_SSPX.ps')
+    # plt.show()
+    plt.savefig('pie_pop_SSPX.ps')
     plt.clf()

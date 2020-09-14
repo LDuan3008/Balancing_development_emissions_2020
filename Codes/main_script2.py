@@ -71,30 +71,29 @@ def get_histCtry(var1, countryList, beg, end):
                 data_array = np.c_[data_array, convert_y]
     return name_array, data_array
 
-def plot_individual_Cty_trend(pop_WB, gdp_WB, co2_WB, int_WB, countryList):
-    years_WB         = np.array(pop_WB[4][5:-5]).astype(np.int)   # 1961 - 2014
-    namePOP, histPOP = get_histCtry(pop_WB, countryList, 5, -5)
-    nameGDP, histGDP = get_histCtry(gdp_WB, countryList, 5, -5)
-    nameCO2, histCO2 = get_histCtry(co2_WB, countryList, 5, -4)
-    CI_WB            = (histCO2*(10**-6)) / (histGDP*(10**-12))
-    CI_WB_toShow     = CI_WB
-    import matplotlib.pyplot as plt
-    for name_idx in range(177):
-        name = nameCO2[name_idx]
-        if name in Lincome_list:
-            print (name)
-            plt.scatter(np.arange(54), CI_WB_toShow[:, name_idx], s=5)
-            plt.ylim(0, 8)
-            plt.show()
-            plt.clf
+# def plot_individual_Cty_trend(pop_WB, gdp_WB, co2_WB, int_WB, countryList):
+#     years_WB         = np.array(pop_WB[4][5:-4]).astype(np.int)   # 1961 - 2014
+#     namePOP, histPOP = get_histCtry(pop_WB, countryList, 5, -4)
+#     nameGDP, histGDP = get_histCtry(gdp_WB, countryList, 5, -4)
+#     nameCO2, histCO2 = get_histCtry(co2_WB, countryList, 5, -4)
+#     CI_WB            = (histCO2*(10**-6)) / (histGDP*(10**-12))
+#     CI_WB_toShow     = CI_WB
+#     import matplotlib.pyplot as plt
+#     for name_idx in range(177):
+#         name = nameCO2[name_idx]
+#         if name in Lincome_list:
+#             print (name)
+#             plt.scatter(np.arange(54), CI_WB_toShow[:, name_idx], s=5)
+#             plt.ylim(0, 8)
+#             plt.show()
+#             plt.clf
 
 def calculate_historical_global(pop_WB, gdp_WB, co2_WB, int_WB, countryList):
-    years_WB     = np.array(pop_WB[4][5:-5]).astype(np.int)   # 1961 - 2014
-    popGlobal_WB = (10**-9) *  np.array(pop_WB[262][5:-5]).astype(np.float)    # billion pop
-    gdpGlobal_WB = (10**-12)*  np.array(gdp_WB[262][5:-5]).astype(np.float)    # trillion 2010 US$
+    years_WB     = np.array(pop_WB[4][5:-4]).astype(np.int)   # 1961 - 2014
+    popGlobal_WB = (10**-9) *  np.array(pop_WB[262][5:-4]).astype(np.float)    # billion pop
+    gdpGlobal_WB = (10**-12)*  np.array(gdp_WB[262][5:-4]).astype(np.float)    # trillion 2010 US$
     co2Global_WB = (10**-6) *  np.array(co2_WB[262][5:-4]).astype(np.float)    # Gt CO2
     intGlobal_WB =             np.array(int_WB[262][15:-6]).astype(np.float)   # Energy use 1971-2014
-    # intGlobal_WB = 0.
     percapitagdp_WB = gdpGlobal_WB / popGlobal_WB
     CI_WB           = co2Global_WB / gdpGlobal_WB
     table_WB0 = get_table(CI_WB[:-4],     years_WB[:-4] )
@@ -105,9 +104,9 @@ def calculate_historical_global(pop_WB, gdp_WB, co2_WB, int_WB, countryList):
 
 
 def calculate_historical_cty(pop_WB, gdp_WB, co2_WB, int_WB, countryList):
-    years_WB     = np.array(pop_WB[4][5:-5]).astype(np.int)   # 1961 - 2014
-    namePOP, histPOP = get_histCtry(pop_WB, countryList, 5, -5)
-    nameGDP, histGDP = get_histCtry(gdp_WB, countryList, 5, -5)
+    years_WB     = np.array(pop_WB[4][5:-4]).astype(np.int)   # 1961 - 2014
+    namePOP, histPOP = get_histCtry(pop_WB, countryList, 5, -4)
+    nameGDP, histGDP = get_histCtry(gdp_WB, countryList, 5, -4)
     nameCO2, histCO2 = get_histCtry(co2_WB, countryList, 5, -4)
     nameINT, histINT = get_histCtry(int_WB, countryList, 5, -5)
     Lco2, Lgdp, Lene, Lint = np.zeros([54]), np.zeros([54]), np.zeros([54]), np.zeros([54])

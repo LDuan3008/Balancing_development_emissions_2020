@@ -49,6 +49,35 @@ def get_2018_pcgdp(pop, gdp, category, countryList, idx):
                 data_array.append(pcgdp)
     return np.array(name_array), np.array(data_array)
 
+
+def new_CTYemissions(original_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_ctyLevel):
+    print (original_CumCO2Emit_ctyLevel.shape)
+    print (adjuated_CumCO2Emit_ctyLevel.shape)
+
+    idx = [167, 137, 72, 42, 30, 73, 82, 103, 117, 55, 21, 124]
+    idx = [124]
+
+    for i in idx:
+        plt.plot(np.arange(91)+2010, np.array(original_CumCO2Emit_ctyLevel[4, i, :]), color='black')
+        plt.plot(np.arange(91)+2010, np.array(adjuated_CumCO2Emit_ctyLevel[4, 1, 4, i, :]), color='blue')
+        plt.plot(np.arange(91)+2010, np.array(adjuated_CumCO2Emit_ctyLevel[3, 1, 4, i, :]), color='green')
+        plt.plot(np.arange(91)+2010, np.array(adjuated_CumCO2Emit_ctyLevel[2, 1, 4, i, :]), color='orange')
+        plt.plot(np.arange(91)+2010, np.array(adjuated_CumCO2Emit_ctyLevel[1, 1, 4, i, :]), color='purple')
+        plt.plot(np.arange(91)+2010, np.array(adjuated_CumCO2Emit_ctyLevel[0, 1, 4, i, :]), color='firebrick')
+    plt.xlim(2020, 2100)
+    # plt.ylim(0, 30)
+    # plt.yscale('log', basey=10)
+    plt.savefig('testtest124.ps')
+    # plt.show()
+    plt.clf()
+    stop
+
+
+
+
+
+
+
 def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP, pop_WB, gdp_WB, countryList):
     # calculate time reaching gdp thresholds
     case_num = len(shreshold_list)
@@ -60,7 +89,7 @@ def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP
                     if percapitagdpSSPs[ssp_idx,cty_idx,time_idx] >= shreshold_list[case_idx] and interpolatedyearSSP[time_idx]>=2020:
                         output_array[case_idx, ssp_idx, cty_idx] = interpolatedyearSSP[time_idx]
                         break
-    
+
     """
     # select countries based on emissions
     num = 4
@@ -87,11 +116,13 @@ def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP
                'GRC', 'PRT', 'ESP', 'AUT', 'SWE', 'FIN', 'MLT', 'CYP', 'POL', 
                'HUN', 'CZE', 'SVK', 'SVN', 'EST', 'LVA', 'LTU', 'ROU', 'BGR']
     ssp5EU = np.zeros([27, case_num, 5])
+    ssp5EU_2 = np.zeros([27, 91])
     for idx in range(27):
         EUidx = int(np.argwhere(countryList == EU_list[idx] ))
         ssp5EU[idx, :, :] = output_array[:, :, EUidx]
+        ssp5EU_2[idx] = percapitagdpSSPs[4, EUidx]
     EU_avg = np.mean(ssp5EU, axis=0)
-    print (EU_avg.shape)
+    EU_avg_2 = np.mean(ssp5EU_2, axis=0)
     
     num = 4
     selected_ctyH = ['USA', 'DEU', 'JPN', 'FRA'] #'GBR', 
@@ -101,6 +132,7 @@ def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP
     ssp5H = np.zeros([num, case_num, 5])
     ssp5M = np.zeros([num, case_num, 5])
     ssp5L = np.zeros([num, case_num, 5])
+    idx = []
     for i in range(num):
         Hidx = int(np.argwhere(countryList == selected_ctyH[i] ))
         ssp5H[i] = output_array[:, :, Hidx]
@@ -108,7 +140,26 @@ def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP
         ssp5M[i] = output_array[:, :, Midx]
         Lidx = int(np.argwhere(countryList == selected_ctyL[i] ))
         ssp5L[i] = output_array[:, :, Lidx]
-        
+        idx.append(Hidx); idx.append(Midx); idx.append(Lidx)
+
+    for i in idx:
+        plt.plot(np.arange(91)+2010, np.array(percapitagdpSSPs[4, i, :]), color='black')
+    # plt.plot(np.arange(91)+2010, np.array(EU_avg_2), color='black')
+    plt.plot(np.arange(91)+2010, np.zeros(91)+10, color='firebrick')
+    plt.plot(np.arange(91)+2010, np.zeros(91)+20, color='firebrick')
+    plt.plot(np.arange(91)+2010, np.zeros(91)+40, color='firebrick')
+    plt.plot(np.arange(91)+2010, np.zeros(91)+80, color='firebrick')
+    plt.xlim(2020, 2100)
+    # plt.ylim(2**2, 200)
+    plt.ylim(5, 160)
+    plt.yscale('log', basey=10)
+    plt.savefig('test_log2_2.ps')
+    # plt.show()
+    plt.clf()
+    stop
+
+
+
     #ssp5 = np.r_[ssp5H, ssp5M, ssp5L]
     ssp5 = np.array(np.r_[ssp5H, ssp5M, ssp5L, EU_avg[None,:,:]])
     print (ssp5.shape)
@@ -123,6 +174,13 @@ def Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list, interpolatedyearSSP
     plt.show()
     # plt.savefig('upper.ps')
     plt.clf()
+
+
+
+
+
+
+
     
     
     
@@ -174,6 +232,14 @@ def plot_cty_CumEmit(original_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_ctyLevel,
     country_list_80 = np.array( [usa_emit_red[4,1], deu_emit_red[4,1], jpn_emit_red[4,1], fra_emit_red[4,1], rus_emit_red[4,1], chn_emit_red[4,1], mex_emit_red[4,1], bra_emit_red[4,1], idn_emit_red[4,1], ind_emit_red[4,1], nga_emit_red[4,1], pak_emit_red[4,1], eu_emits_red[4,1] ] )
     country_list_n0 = np.array( [usa_emit_org,      deu_emit_org,      jpn_emit_org,      fra_emit_org,      rus_emit_org,      chn_emit_org,      mex_emit_org,      bra_emit_org,      idn_emit_org,      ind_emit_org,      nga_emit_org,      pak_emit_org     , eu_emits_org      ] )
     
+    print (country_list_00)
+    print (country_list_10)
+    print (country_list_20)
+    print (country_list_40)
+    print (country_list_80)
+    print (country_list_n0)
+    stop
+
     xaxis = np.arange(13)
     width = 0.5
     plt.bar(xaxis, country_list_00, width, color='grey')

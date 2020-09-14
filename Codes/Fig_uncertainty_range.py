@@ -1,7 +1,6 @@
 import numpy as np
 import MV2 as MV
 import cdms2 as cdms
-import vcs
 from matplotlib import pyplot as plt
 
 """

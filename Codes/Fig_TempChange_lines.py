@@ -42,8 +42,8 @@ def Fig_TempChange_lines(shreshold_list, cumulco2Emi, cumulco2Emi_org, interpola
     ax1.set_xlim(0,1)
     ax1v.set_xlim(0,1)
     plt.ylim(0, 3)
-    plt.show()
-    #plt.savefig('figs3.ps')
+    # plt.show()
+    plt.savefig('figs3.ps')
     plt.clf()
     
 
@@ -70,6 +70,6 @@ def plot_contour_plot(shreshold_list, ramprate_list, cumulco2Emi):
     lp = ax.contour(x, y, shre_ramp_cuml1, levels=[1,2,3,4,5,6], colors='black', linestyles='dashed', linewidths=1)
     
     plt.colorbar(mp, ax=ax, extend='max')
-    # plt.savefig('test3.ps')
-    plt.show()
+    plt.savefig('test3.ps')
+    # plt.show()
     plt.clf()

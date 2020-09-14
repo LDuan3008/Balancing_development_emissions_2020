@@ -16,8 +16,8 @@ def plot_CumEmi(interpolatedyearSSP, cumulco2Emi_org, cumulco2Emi):
     plt.xlabel("yr")
     plt.ylabel("co2Emi")
     plt.legend(loc=2) 
-    plt.show()
-    # plt.savefig('co2Cum_SSP5gdp40.ps')
+    # plt.show()
+    plt.savefig('co2Cum_SSP5gdp40.ps')
     plt.close()
 
 

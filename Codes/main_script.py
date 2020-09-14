@@ -9,18 +9,18 @@ from main_script3_2 import future_projections_DiffRate
 
 ######################################################################################################
 # read_in_data
-pop_WB, gdp_WB, co2_WB, int_WB, gdpRawSSP, popRawSSP = read_in_data()
+pop_WB, gdp_WB, co2_WB, int_WB, gdpRawSSP, popRawSSP, convert = read_in_data()
 countryList = np.unique((gdpRawSSP[1:-1,2]))
 [years_WB, popGlobal_WB, gdpGlobal_WB, co2Global_WB, intGlobal_WB, percapitagdp_WB, CI_WB, table_WB] = calculate_historical_global(pop_WB, gdp_WB, co2_WB, int_WB, countryList)
 [table_ctyL, table_ctyM, table_ctyH, CI_CTY_L, CI_CTY_M, CI_CTY_H, INT_CTY_L, INT_CTY_M, INT_CTY_H, CI_INT_CTY_L, CI_INT_CTY_M, CI_INT_CTY_H] = calculate_historical_cty(pop_WB, gdp_WB, co2_WB, int_WB, countryList)
 
 
-""" Calculate numbers in paper
+# """ Calculate numbers in paper
 ################################################################################################################################################################
 shreshold_list, ramprate_list, need_country, table_used = [0, 10, 20, 40, 80], [0, 0.02, 0.08], 1.,  table_WB[-6] 
 [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
- percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+ percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 
 # Second paragraph
 term1 = (adjuated_CumCO2Emit_ctyLevel[0,1,4,:,-1] - adjuated_CumCO2Emit_ctyLevel[0,1,4,:,9])
@@ -49,6 +49,7 @@ print ()
 # Forth 
 warming_org = original_CumCO2Emit_gloLevel[:,-1] - original_CumCO2Emit_gloLevel[:,1] + 515*3.667
 warming_red = adjuated_CumCO2Emit_gloLevel[:,:,:,-1] - adjuated_CumCO2Emit_gloLevel[:,:,:,1] + 515*3.667
+
 print ( (warming_red[1, 0, 4] - warming_red[0, 0, 4])*2/3667)
 print ( (warming_red[1, 1, 4] - warming_red[0, 1, 4])*2/3667)
 print ( (warming_red[1, 2, 4] - warming_red[0, 2, 4])*2/3667)
@@ -59,15 +60,18 @@ print ( (warming_red[3, 1, 4] - warming_red[0, 1, 4])*2/3667)
 print ( (warming_red[4, 1, 4] - warming_red[0, 1, 4])*2/3667)
 print ()
 print (  warming_red[0, 1, 4]                        *2/3667)  # Abstract
+print (  ((warming_red[1, 1, 4] - warming_red[0, 1, 4])*2/3667) / (warming_red[0, 1, 4]*2/3667) * 100  )
 ################################################################################################################################################################
 # """
+
+
 
 """ table S2-S6
 ################################################################################################################################################################
 shreshold_list, ramprate_list, need_country, table_used = [0, 10, 20, 40, 80], [0, 0.01, 0.02, 0.04, 0.08], 0, table_WB[-6]
 [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
- percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+ percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 # Table S2-S5
 from Table import Fig_YearReachThreshold_Table
 shreshold_list_for_plot = [10, 20, 40, 80]
@@ -76,10 +80,12 @@ Fig_YearReachThreshold_Table(percapitagdpSSPs, shreshold_list_for_plot, interpol
 warming_org = original_CumCO2Emit_gloLevel[4,-1] - original_CumCO2Emit_gloLevel[4,1] + 515*3.667
 warming_red = adjuated_CumCO2Emit_gloLevel[:,:,4,-1] - adjuated_CumCO2Emit_gloLevel[:,:,4,1] + 515*3.667
 print ( (warming_red[1:] - warming_red[0]) * 2/3667 )
+print ('---')
+print ( (warming_red * 2/3667 ) )
 ################################################################################################################################################################
 # """
 
-""" SOM Figures
+# """ SOM Figures
 ################################################################################################################################################################
 # from FigSOM_PerCapGDP_PerCapEmi import plot_PerCapGDP_PerCapEmi
 # plot_PerCapGDP_PerCapEmi(co2_WB, gdp_WB, pop_WB, countryList)
@@ -92,34 +98,36 @@ print ( (warming_red[1:] - warming_red[0]) * 2/3667 )
 # shreshold_list, ramprate_list, need_country, table_used = [0, 10, 20, 40, 80], [0.01,  0.02], 1, table_WB[-6]
 # [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
 #  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
-#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 # plot_maps(original_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_ctyLevel, countryList)
 
 # from FigSOM_CumulativeEmissions import plot_CumEmi    # need_country = 0
 # shreshold_list, ramprate_list, need_country, table_used = [0, 10, 20, 40, 80], [0.01,  0.02], 0, table_WB[-6]
 # [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
 #  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
-#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 # plot_CumEmi(interpolatedyearSSP, original_CumCO2Emit_gloLevel, adjuated_CumCO2Emit_gloLevel)
+
+# # Newly added, Compare annual CO2 emissions from our estimation with the SSP baseline scenario
+# shreshold_list, ramprate_list, need_country, table_used = [0,  10,  20, 40, 80], [0.02, 0.04], 0, table_WB[-6]
+# [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
+#  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
+#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
+#  ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
+# year2 = np.arange(91)+2010
+# from FigSOM_CompAnnuCarbEmis import compare, compare_reg, compare_cty
+# compare(original_AnnCO2Emit_gloLevel, adjuated_AnnCO2Emit_gloLevel, countryList)
+# # compare_reg(original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel, countryList)
+# # compare_cty(original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel, countryList)
 
 # from FigSOM_pie import plot_pie
 # shreshold_list, ramprate_list, need_country, table_used = [0, 10, 20, 40, 80], [0.01,  0.02], 0, table_WB[-6]
 # [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
 #  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
-#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 # plot_pie(interpolatedyearSSP, adjuated_AnnCO2Emit_gloLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_gloLevel, adjuated_CumCO2Emit_gloLevel, interpolatedpopSSPs, percapitagdpSSPs)
 
-# Newly added, Compare annual CO2 emissions from our estimation with the SSP baseline scenario
-# shreshold_list, ramprate_list, need_country, table_used = [0,  10,  20, 40, 80], [0.02, 0.04], 0, table_WB[-6]
-# [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
-#  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
-#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-#  ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
-# year2 = np.arange(91)+2010
-# from FigSOM_CompAnnuCarbEmis import compare, compare_reg, compare_cty
-# compare(original_AnnCO2Emit_gloLevel, adjuated_AnnCO2Emit_gloLevel, countryList)
-# compare_reg(original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel, countryList)
-# compare_cty(original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel, countryList)
+
 ################################################################################################################################################################
 # """
 
@@ -131,17 +139,26 @@ ramprate_list  = [0.01, 0.02]
 need_country   = 1
 table_used = table_WB[-6] 
 
-[original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
- adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
- percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
- ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+# [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
+#  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
+#  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
+#  ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
+# with open('save_tmp.pickle', 'wb') as handle:
+#     pickle.dump([percapitagdpSSPs, interpolatedyearSSP, original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel,], handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+with open('save_tmp.pickle', 'rb') as handle:
+    percapitagdpSSPs, interpolatedyearSSP, original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel = pickle.load(handle)
 
 from Fig_YearReach_BarEmit import Fig_YearReachThreshold
 shreshold_list_for_plot = [10, 20, 40, 80]
 ramprate_list = [0, 0.02]
 Fig_YearReachThreshold(percapitagdpSSPs, shreshold_list_for_plot, interpolatedyearSSP, pop_WB, gdp_WB, countryList)
-from Fig_YearReach_BarEmit import plot_cty_CumEmit
-plot_cty_CumEmit(original_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_ctyLevel, interpolatedpopSSPs, interpolatedgdpSSPs, percapitagdpSSPs, countryList)
+
+# from Fig_YearReach_BarEmit import new_CTYemissions
+# new_CTYemissions(original_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_ctyLevel)
+
+# from Fig_YearReach_BarEmit import plot_cty_CumEmit
+# plot_cty_CumEmit(original_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_ctyLevel, interpolatedpopSSPs, interpolatedgdpSSPs, percapitagdpSSPs, countryList)
 ################################################################################################################################################################
 #"""
 
@@ -156,7 +173,7 @@ table_used = table_WB[-6]
 [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
- ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+ ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 
 # Three figures:
 # (1) Time series of the global-scale annual CO2 emissions from 2020;
@@ -172,14 +189,14 @@ Fig_TimeSeries_Pieplots(interpolatedyearSSP, interpolatedpopSSPs, percapitagdpSS
 ################################################################################################################################################################
 shreshold_list = np.arange(0,82,1)
 ramprate_list  = [0, 0.01, 0.02, 0.04, 0.08]
-# ramprate_list  = np.arange(0, 0.082, 0.01)
+# ramprate_list  = np.arange(0, 0.082, 0.001)
 need_country   = 0
 table_used = table_WB[-6] 
 
 [original_AnnCO2Emit_ctyLevel, original_AnnCO2Emit_gloLevel, original_CumCO2Emit_ctyLevel, original_CumCO2Emit_gloLevel, 
  adjuated_AnnCO2Emit_ctyLevel, adjuated_AnnCO2Emit_gloLevel, adjuated_CumCO2Emit_ctyLevel, adjuated_CumCO2Emit_gloLevel,
  percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
- ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+ ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
 
 # Twp figures: 
 # (1) Line plots showing additional warming;
@@ -190,6 +207,8 @@ Fig_TempChange_lines(shreshold_list, adjuated_CumCO2Emit_gloLevel, original_CumC
 # plot_contour_plot(shreshold_list, ramprate_list, adjuated_CumCO2Emit_gloLevel)
 ################################################################################################################################################################
 #"""
+
+
 
 
 """             #------------------------------------------------------->    figure here
@@ -204,7 +223,7 @@ if first_time == 1:
     [original_AnnCO2Emit_ctyLevel_add0, original_AnnCO2Emit_gloLevel_add0, original_CumCO2Emit_ctyLevel_add0, original_CumCO2Emit_gloLevel_add0, 
     adjuated_AnnCO2Emit_ctyLevel_add0, adjuated_AnnCO2Emit_gloLevel_add0, adjuated_CumCO2Emit_ctyLevel_add0, adjuated_CumCO2Emit_gloLevel_add0,
     percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
     print ('done 0')
     with open('add0.pickle', 'wb') as handle:
         pickle.dump([original_CumCO2Emit_gloLevel_add0,adjuated_CumCO2Emit_gloLevel_add0], handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -216,7 +235,7 @@ if first_time == 1:
     [original_AnnCO2Emit_ctyLevel_add1, original_AnnCO2Emit_gloLevel_add1, original_CumCO2Emit_ctyLevel_add1, original_CumCO2Emit_gloLevel_add1, 
     adjuated_AnnCO2Emit_ctyLevel_add1, adjuated_AnnCO2Emit_gloLevel_add1, adjuated_CumCO2Emit_ctyLevel_add1, adjuated_CumCO2Emit_gloLevel_add1,
     percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
     print ('done 1')
     with open('add1.pickle', 'wb') as handle:
         pickle.dump([original_CumCO2Emit_gloLevel_add1,adjuated_CumCO2Emit_gloLevel_add1], handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -228,7 +247,7 @@ if first_time == 1:
     [original_AnnCO2Emit_ctyLevel_add2, original_AnnCO2Emit_gloLevel_add2, original_CumCO2Emit_ctyLevel_add2, original_CumCO2Emit_gloLevel_add2, 
     adjuated_AnnCO2Emit_ctyLevel_add2, adjuated_AnnCO2Emit_gloLevel_add2, adjuated_CumCO2Emit_ctyLevel_add2, adjuated_CumCO2Emit_gloLevel_add2,
     percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
     print ('done 2')
     with open('add2.pickle', 'wb') as handle:
         pickle.dump([original_CumCO2Emit_gloLevel_add2,adjuated_CumCO2Emit_gloLevel_add2], handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -240,7 +259,7 @@ if first_time == 1:
     [original_AnnCO2Emit_ctyLevel_add3, original_AnnCO2Emit_gloLevel_add3, original_CumCO2Emit_ctyLevel_add3, original_CumCO2Emit_gloLevel_add3, 
     adjuated_AnnCO2Emit_ctyLevel_add3, adjuated_AnnCO2Emit_gloLevel_add3, adjuated_CumCO2Emit_ctyLevel_add3, adjuated_CumCO2Emit_gloLevel_add3,
     percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country)
+    ] = future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert)
     print ('done 3')
     with open('add3.pickle', 'wb') as handle:
         pickle.dump([original_CumCO2Emit_gloLevel_add3,adjuated_CumCO2Emit_gloLevel_add3], handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -251,7 +270,7 @@ if first_time == 1:
     [original_AnnCO2Emit_ctyLevel_add4, original_AnnCO2Emit_gloLevel_add4, original_CumCO2Emit_ctyLevel_add4, original_CumCO2Emit_gloLevel_add4, 
     adjuated_AnnCO2Emit_ctyLevel_add4, adjuated_AnnCO2Emit_gloLevel_add4, adjuated_CumCO2Emit_ctyLevel_add4, adjuated_CumCO2Emit_gloLevel_add4,
     percapitagdpSSPs, interpolatedyearSSP, interpolatedgdpSSPs, interpolatedpopSSPs
-    ] = future_projections_DiffRate(gdpRawSSP, popRawSSP, countryList, table_usedL, table_usedM, table_usedH, shreshold_list, ramprate_list, need_country)
+    ] = future_projections_DiffRate(gdpRawSSP, popRawSSP, countryList, table_usedL, table_usedM, table_usedH, shreshold_list, ramprate_list, need_country, convert)
     print ('done 4')
     with open('add4.pickle', 'wb') as handle:
         pickle.dump([original_CumCO2Emit_gloLevel_add4,adjuated_CumCO2Emit_gloLevel_add4], handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -276,3 +295,4 @@ Fig_uncertainty_range(original_CumCO2Emit_gloLevel_add0, adjuated_CumCO2Emit_glo
                       shreshold_list, ramprate_list)
 ################################################################################################################################################################
 #"""
+# %%

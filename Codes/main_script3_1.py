@@ -59,17 +59,18 @@ def cal_adjuated_emissions(shreshold, ramprate, co2EmiCtry, percapitagdpSSPs, in
 ############################################################################################################
 #### main function starts from here ########################################################################
     ########################################################################################################
-def future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country):
-    factor2010gdp2005 = 0.909585947164884
+def future_projections_SameRate(gdpRawSSP, popRawSSP, countryList, table_used, shreshold_list, ramprate_list, need_country, convert):
+    # factor2010gdp2005 = 0.909585947164884
+    factor2010gdp2005 = 1.0
     model_name = 'OECD Env-Growth'
     SSP_list = {0:'SSP1', 1:'SSP2', 2:'SSP3', 3:'SSP4', 4:'SSP5'}
     yearsSSP = np.array([2010,2020,2030,2040,2050,2060,2070,2080,2090,2100])
-    
     # step1, select data from input files
     gdpSSPs = np.zeros([5,177,10])
     popSSPs = np.zeros([5,177,10])
     for i in range(5):
         gdpSSPs[i] = selectSSPs(gdpRawSSP, SSP_list[i], yearsSSP, model_name, countryList)
+        gdpSSPs[i] = gdpSSPs[i] * convert[:, None]
         popSSPs[i] = selectSSPs(popRawSSP, SSP_list[i], yearsSSP, model_name, countryList) 
         
     # step2, interpolate to yearly resolution

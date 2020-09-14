@@ -23,8 +23,8 @@ def compare(original_AnnCO2Emit_gloLevel, adjuated_AnnCO2Emit_gloLevel, countryL
         plt.plot(year3, adjuated_AnnCO2Emit_gloLevel[idx, 0, 4], color='grey')
     plt.xlim(2020, 2100)
     plt.ylim(0, 180)
-    plt.show()
-    # plt.savefig('globalscale.ps')
+    # plt.show()
+    plt.savefig('globalscale.ps')
     plt.clf()
 
     

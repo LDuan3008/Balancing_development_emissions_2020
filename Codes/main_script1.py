@@ -27,6 +27,8 @@ def read_in_data():
     popRawSSP_fn = 'iamc_db-Pop.xlsx'
     gdpRawSSP = np.array(pd.read_excel(data_path + gdpRawSSP_fn, header = None))[1:1726]
     popRawSSP = np.array(pd.read_excel(data_path + popRawSSP_fn, header = None))[1:2711]
-    return pop_WB, gdp_WB, co2_WB, int_WB, gdpRawSSP, popRawSSP
-
-    
+    HisGDPppp_fn = 'iamc_db-HisGDPppp.xlsx'
+    HisGDPppp2005 = np.array(pd.read_excel(data_path + HisGDPppp_fn, header = None))[1:178,5]
+    HisGDPusd2010 = np.array(pd.read_excel(data_path + HisGDPppp_fn, header = None))[1:178,6]/1e9
+    convert = HisGDPusd2010/HisGDPppp2005
+    return pop_WB, gdp_WB, co2_WB, int_WB, gdpRawSSP, popRawSSP, convert

@@ -79,7 +79,8 @@ def plot_Ctrymap_dl_emit(year_decarbon, name, countryList):
     supra = pygal.maps.world.World(style = custom_style1)
     for i in range(interval_num_total):
         supra.add('',my_list[i])
-    supra.render_to_file(name + '.svg')
+    # supra.render_to_file(name + '.svg')
+    supra.render_to_file(name + '.pdf')
     
     
 def plot_maps(cumulco2Emi_country_org, cumulco2Emi, countryList):

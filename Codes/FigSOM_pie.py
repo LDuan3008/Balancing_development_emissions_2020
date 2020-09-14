@@ -19,8 +19,8 @@ def plot_pie(interpolatedyearSSP, annualco2Emi, annualco2Emi_org, cumulco2Emi_or
     pie = [per_00, per_10, per_20, per_40, per_80]
     explode = (0, 0, 0, 0, 0)
     plt.pie(pie, explode=explode, shadow=False, startangle=90, autopct='%1.3f%%', counterclock=False)
-    plt.show()
-    # plt.savefig('pieS5.ps')
+    # plt.show()
+    plt.savefig('pieS5.ps')
     plt.clf()
     
     
